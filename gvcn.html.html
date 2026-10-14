@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GVCN | Bus Stop Format Builder</title>
+<style>
+  :root {
+    --bg: #101216;
+    --panel: #181b20;
+    --text: #f1f3f5;
+    --muted: #a0a8b2;
+    --border: #303640;
+    --accent: #e99532;
+    --accent-dark: #e99532;
+    --soft: #202e36;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 "Segoe UI", Arial, sans-serif;
+  }
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 20px 24px;
+    text-align: center;
+  }
+  .eyebrow {
+    color: var(--accent-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  h1 { margin: 5px 0 4px; font-size: clamp(24px, 4vw, 32px); }
+  header p { color: var(--muted); margin: 0; }
+  main { max-width: 900px; margin: 26px auto; padding: 0 16px 36px; }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .tab {
+    padding: 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    transition: .15s ease;
+  }
+  .tab:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .tab.active {
+    border-color: var(--accent);
+    background: var(--soft);
+    color: var(--accent-dark);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: clamp(18px, 4vw, 28px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, .22);
+  }
+  .section { display: none; }
+  .section.active { display: block; }
+  h2 { margin: 0 0 5px; font-size: 22px; }
+  .description { margin: 0 0 22px; color: var(--muted); }
+  label { display: block; font-weight: 700; margin: 16px 0 7px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #3a424d;
+    border-radius: 9px;
+    background: #111419;
+    color: var(--text);
+    font: inherit;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-dark);
+    box-shadow: 0 0 0 3px rgba(84, 195, 234, .18);
+  }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .output-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-top: 22px;
+  }
+  .output-head label { margin: 0; }
+  .output { min-height: 145px; resize: vertical; white-space: pre-wrap; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .primary, .secondary {
+    border: 0; border-radius: 9px; padding: 11px 17px; cursor: pointer;
+    font: inherit; font-weight: 750;
+  }
+  .primary { background: var(--accent); color: #102a35; }
+  .primary:hover { background: #3ab4df; }
+  .secondary { background: #2a3038; color: #e6e9ed; }
+  .secondary:hover { background: #363e48; }
+  .status { min-height: 20px; color: var(--accent-dark); font-size: 13px; margin-top: 8px; }
+  footer { color: var(--muted); text-align: center; font-size: 12px; padding: 4px 12px 24px; }
+  @media (max-width: 560px) {
+    .tabs { grid-template-columns: 1fr; }
+    .tab { padding: 12px; }
+    .output-head { align-items: flex-start; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">GVCN · Transportation</div>
+  <h1>Bus Stop Format Builder</h1>
+  <p>Choose a route, select a stop, and copy your ready-to-use callout.</p>
+</header>
+
+<main>
+  <nav class="tabs" aria-label="Bus stop format sections">
+    <button class="tab active" data-target="greenville" type="button">Greenville Route</button>
+    <button class="tab" data-target="horton" type="button">Horton Route</button>
+    <button class="tab" data-target="custom" type="button">Custom Stop</button>
+  </nav>
+
+  <div class="panel">
+    <section class="section active" id="greenville">
+      <h2>Greenville Bus Stops</h2>
+      <p class="description">Route starts at Roadmap.</p>
+      <label for="green-callsign">Callsign</label>
+      <input id="green-callsign" placeholder="e.g. Bus-01" autocomplete="off">
+      <label for="green-stop">Choose a stop</label>
+      <select id="green-stop">
+        <option value="Proceeding to Bulks Food/Fox Mountain Bank.">Stop 1 — Bulks Food/Fox Mountain Bank</option>
+        <option value="Proceeding to Six Houses.">Stop 2 — Six Houses</option>
+        <option value="Proceeding to WSP Station.">Stop 3 — WSP Station</option>
+        <option value="Proceeding to the Lakeville Neighborhood.">Stop 4 — Lakeville Neighborhood</option>
+        <option value="Proceeding to Truck Planet.">Stop 5 — Truck Planet</option>
+        <option value="Proceeding to Burger Haus.">Stop 6 — Burger Haus</option>
+        <option value="Proceeding to Roadmap.">Stop 7 — Roadmap</option>
+      </select>
+      <div class="hint">Select the stop you are departing toward.</div>
+      <div class="output-head"><label for="green-output">Copy-ready format</label></div>
+      <textarea class="output" id="green-output" readonly></textarea>
+      <div class="actions">
+        <button class="primary" type="button" onclick="copyOutput('green-output','green-status')">Copy Format</button>
+        <button class="secondary" type="button" onclick="updateRoute('greenville')">Refresh Output</button>
+      </div>
+      <div class="status" id="green-status" aria-live="polite"></div>
+    </section>
+
+    <section class="section" id="horton">
+      <h2>Horton Bus Stops</h2>
+      <p class="description">Route starts at Horton Park.</p>
+      <label for="horton-callsign">Callsign</label>
+      <input id="horton-callsign" placeholder="e.g. Bus-01" autocomplete="off">
+      <label for="horton-stop">Choose a stop</label>
+      <select id="horton-stop">
+        <option value="Proceeding to Kat’s Cafe.">Stop 1 — Kat’s Cafe</option>
+        <option value="Proceeding to Ol’ Texas.">Stop 2 — Ol’ Texas</option>
+        <option value="Proceeding to Peacekeeping Court (Red Brick Road).">Stop 3 — Peacekeeping Court (Red Brick Road)</option>
+        <option value="Proceeding to Bill’s Diner.">Stop 4 — Bill’s Diner</option>
+        <option value="Proceeding to Horton Park.">Stop 5 — Horton Park</option>
+      </select>
+      <div class="hint">Select the stop you are departing toward.</div>
+      <div class="output-head"><label for="horton-output">Copy-ready format</label></div>
+      <textarea class="output" id="horton-output" readonly></textarea>
+      <div class="actions">
+        <button class="primary" type="button" onclick="copyOutput('horton-output','horton-status')">Copy Format</button>
+        <button class="secondary" type="button" onclick="updateRoute('horton')">Refresh Output</button>
+      </div>
+      <div class="status" id="horton-status" aria-live="polite"></div>
+    </section>
+
+    <section class="section" id="custom">
+      <h2>Custom Bus Stop</h2>
+      <p class="description">Create a callout for any stop not listed in the standard routes.</p>
+      <label for="custom-callsign">Callsign</label>
+      <input id="custom-callsign" placeholder="e.g. Bus-01" autocomplete="off">
+      <label for="custom-stop-number">Stop number</label>
+      <input id="custom-stop-number" type="number" min="1" step="1" placeholder="e.g. 3">
+      <label for="custom-destination">Destination</label>
+      <input id="custom-destination" placeholder="e.g. Greenville Hospital">
+      <div class="output-head"><label for="custom-output">Copy-ready format</label></div>
+      <textarea class="output" id="custom-output" readonly></textarea>
+      <div class="actions">
+        <button class="primary" type="button" onclick="copyOutput('custom-output','custom-status')">Copy Format</button>
+        <button class="secondary" type="button" onclick="updateRoute('custom')">Refresh Output</button>
+      </div>
+      <div class="status" id="custom-status" aria-live="polite"></div>
+    </section>
+  </div>
+</main>
+<footer>GVCN · DOT Transportation Division</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(item => item.classList.toggle('active', item === tab));
+      document.querySelectorAll('.section').forEach(section =>
+        section.classList.toggle('active', section.id === tab.dataset.target)
+      );
+      updateRoute(tab.dataset.target);
+    });
+  });
+
+  function makeRouteOutput(section) {
+    if (section === 'greenville') {
+      const callsign = document.getElementById('green-callsign').value.trim() || '(Callsign)';
+      const stop = document.getElementById('green-stop');
+      const stopNumber = stop.selectedIndex + 1;
+      return `${callsign} Departure - Stop ${stopNumber}: ${stop.value}`;
+    }
+    if (section === 'horton') {
+      const callsign = document.getElementById('horton-callsign').value.trim() || '(Callsign)';
+      const stop = document.getElementById('horton-stop');
+      const stopNumber = stop.selectedIndex + 1;
+      return `${callsign} Departure - Stop ${stopNumber}: ${stop.value}`;
+    }
+    const callsign = document.getElementById('custom-callsign').value.trim() || '(Callsign)';
+    const number = document.getElementById('custom-stop-number').value.trim() || '#';
+    const destination = document.getElementById('custom-destination').value.trim() || '[Destination]';
+    return `${callsign} Departure - Stop ${number}: Proceeding to ${destination}.`;
+  }
+
+  function updateRoute(section) {
+    const outputId = section === 'greenville' ? 'green-output' :
+                     section === 'horton' ? 'horton-output' : 'custom-output';
+    document.getElementById(outputId).value = makeRouteOutput(section);
+  }
+
+  async function copyOutput(outputId, statusId) {
+    const output = document.getElementById(outputId);
+    const status = document.getElementById(statusId);
+    const section = outputId.startsWith('green') ? 'greenville' :
+                    outputId.startsWith('horton') ? 'horton' : 'custom';
+    updateRoute(section);
+    try {
+      await navigator.clipboard.writeText(output.value);
+      status.textContent = 'Copied to clipboard!';
+    } catch (error) {
+      output.focus();
+      output.select();
+      const copied = document.execCommand('copy');
+      status.textContent = copied ? 'Copied to clipboard!' : 'Select the text above and copy it.';
+    }
+  }
+
+  ['green-callsign','green-stop'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => updateRoute('greenville')));
+  ['horton-callsign','horton-stop'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => updateRoute('horton')));
+  ['custom-callsign','custom-stop-number','custom-destination'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => updateRoute('custom')));
+
+  updateRoute('greenville');
+  updateRoute('horton');
+  updateRoute('custom');
+</script>
+</body>
+</html>
