@@ -125,7 +125,7 @@
   <nav class="tabs" aria-label="Bus stop format sections">
     <button class="tab active" data-target="greenville" type="button">Greenville Route</button>
     <button class="tab" data-target="horton" type="button">Horton Route</button>
-    <button class="tab" data-target="custom" type="button">Custom Stop</button>
+    <button class="tab" data-target="brookmere" type="button">Brookmere Route</button>
   </nav>
 
   <div class="panel">
@@ -177,22 +177,23 @@
       <div class="status" id="horton-status" aria-live="polite"></div>
     </section>
 
-    <section class="section" id="custom">
-      <h2>Custom Bus Stop</h2>
-      <p class="description">Create a callout for any stop not listed in the standard routes.</p>
-      <label for="custom-callsign">Callsign</label>
-      <input id="custom-callsign" placeholder="e.g. Bus-01" autocomplete="off">
-      <label for="custom-stop-number">Stop number</label>
-      <input id="custom-stop-number" type="number" min="1" step="1" placeholder="e.g. 3">
-      <label for="custom-destination">Destination</label>
-      <input id="custom-destination" placeholder="e.g. Greenville Hospital">
-      <div class="output-head"><label for="custom-output">Copy-ready format</label></div>
-      <textarea class="output" id="custom-output" readonly></textarea>
+    <section class="section" id="brookmere">
+      <h2>Brookmere Bus Stops</h2>
+      <p class="description">Route stops will be added when provided.</p>
+      <label for="brookmere-callsign">Callsign</label>
+      <input id="brookmere-callsign" placeholder="e.g. Bus-01" autocomplete="off">
+      <label for="brookmere-stop">Choose a stop</label>
+      <select id="brookmere-stop">
+        <option value="Brookmere route stops have not been added yet." data-destination="">Stops coming soon</option>
+      </select>
+      <div class="hint">The Brookmere stop list will be added once the route stops are provided.</div>
+      <div class="output-head"><label for="brookmere-output">Copy-ready format</label></div>
+      <textarea class="output" id="brookmere-output" readonly></textarea>
       <div class="actions">
-        <button class="primary" type="button" onclick="copyOutput('custom-output','custom-status')">Copy Format</button>
-        <button class="secondary" type="button" onclick="updateRoute('custom')">Refresh Output</button>
+        <button class="primary" type="button" onclick="copyOutput('brookmere-output','brookmere-status')">Copy Format</button>
+        <button class="secondary" type="button" onclick="updateRoute('brookmere')">Refresh Output</button>
       </div>
-      <div class="status" id="custom-status" aria-live="polite"></div>
+      <div class="status" id="brookmere-status" aria-live="polite"></div>
     </section>
   </div>
 </main>
@@ -223,15 +224,21 @@
       const stopNumber = stop.selectedIndex + 1;
       return `${callsign} Departure - Stop ${stopNumber}: ${stop.value}`;
     }
-    const callsign = document.getElementById('custom-callsign').value.trim() || '(Callsign)';
-    const number = document.getElementById('custom-stop-number').value.trim() || '#';
-    const destination = document.getElementById('custom-destination').value.trim() || '[Destination]';
-    return `${callsign} Departure - Stop ${number}: Proceeding to ${destination}.`;
+    if (section === 'brookmere') {
+      const callsign = document.getElementById('brookmere-callsign').value.trim() || '(Callsign)';
+      const stop = document.getElementById('brookmere-stop');
+      const stopNumber = stop.selectedIndex + 1;
+      const destination = stop.options[stop.selectedIndex]?.dataset.destination;
+      if (!destination) {
+        return `${callsign} Departure - Brookmere Route: Stops coming soon.`;
+      }
+      return `${callsign} Departure - Stop ${stopNumber}: Proceeding to ${destination}.`;
+    }
   }
 
   function updateRoute(section) {
     const outputId = section === 'greenville' ? 'green-output' :
-                     section === 'horton' ? 'horton-output' : 'custom-output';
+                     section === 'horton' ? 'horton-output' : 'brookmere-output';
     document.getElementById(outputId).value = makeRouteOutput(section);
   }
 
@@ -239,7 +246,7 @@
     const output = document.getElementById(outputId);
     const status = document.getElementById(statusId);
     const section = outputId.startsWith('green') ? 'greenville' :
-                    outputId.startsWith('horton') ? 'horton' : 'custom';
+                    outputId.startsWith('horton') ? 'horton' : 'brookmere';
     updateRoute(section);
     try {
       await navigator.clipboard.writeText(output.value);
@@ -256,12 +263,12 @@
     document.getElementById(id).addEventListener('input', () => updateRoute('greenville')));
   ['horton-callsign','horton-stop'].forEach(id =>
     document.getElementById(id).addEventListener('input', () => updateRoute('horton')));
-  ['custom-callsign','custom-stop-number','custom-destination'].forEach(id =>
-    document.getElementById(id).addEventListener('input', () => updateRoute('custom')));
+  ['brookmere-callsign','brookmere-stop'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => updateRoute('brookmere')));
 
   updateRoute('greenville');
   updateRoute('horton');
-  updateRoute('custom');
+  updateRoute('brookmere');
 </script>
 </body>
 </html>
